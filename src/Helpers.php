@@ -1,6 +1,6 @@
 <?php
 
-namespace Xzito\Portfolios;
+namespace Xzito\Portfolio;
 
 class Helpers {
   public static function move_array_element($array, $from_index, $to_index) {

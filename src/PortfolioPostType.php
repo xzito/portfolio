@@ -1,14 +1,14 @@
 <?php
 
-namespace Xzito\Portfolios;
+namespace Xzito\Portfolio;
 
 use PostTypes\PostType;
 
 class PortfolioPostType {
-  public const ID = 'portfolio';
-  public const PLURAL_NAME = 'Portfolios';
-  public const SINGULAR_NAME = 'Portfolio';
-  public const SLUG = 'portfolios';
+  public const ID = 'portfolio_piece';
+  public const PLURAL_NAME = 'Portfolio';
+  public const SINGULAR_NAME = 'Portfolio Piece';
+  public const SLUG = 'portfolio';
 
   private $cpt;
   private $icon = 'dashicons-store';

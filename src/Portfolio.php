@@ -1,196 +1,211 @@
 <?php
 
-namespace Xzito\Portfolios;
-
-use Xzito\Products\Product;
-use Xzito\Portfolios\Portfolio;
+namespace Xzito\Portfolio;
 
 class Portfolio {
-  private $id;
-  private $name;
-  private $card_image;
-  private $banner;
-  private $description;
-  private $main_copy;
-  private $main_image;
-  private $quote;
-  private $list;
-  private $cta;
+  public const QUERY_ARG = 'filter-by-portfolio';
+  public const TAXONOMY_ID = 'related_portfolio';
 
-  public static function find_by_name($name) {
+  public static function all($options = ['return_type' => 'object']) {
+    $return_type = self::set_return_type($options);
+
     $query = new \WP_Query([
-      'posts_per_page' => 1,
-      'post_type'      => PortfolioPostType::ID,
-      'name'           => $name,
-      'fields'         => 'ids',
+      'nopaging' => true,
+      'post_type' => PortfolioPostType::ID,
+      'fields' => 'ids',
     ]);
 
-    $id = $query->posts[0];
+    $portfolio_piece_ids = $query->posts ?? [];
 
-    return new Portfolio($id);
+    if ($return_type === 'ids') {
+      $portfolio_pieces = $portfolio_piece_ids;
+    } else {
+      $portfolio_pieces = [];
+
+      array_map(function ($id) use (&$portfolio_pieces) {
+        $portfolio_pieces[] = new PortfolioPiece($id);
+      }, $portfolio_piece_ids);
+    }
+
+    return $portfolio_pieces;
   }
 
-  public static function find_related_attachments($name) {
-    $query = new \WP_Query([
-      'nopaging'    => true,
-      'post_type'   => 'attachment',
-      'post_status' => 'inherit',
-      'fields'      => 'ids',
-      'tax_query'   => [
-        [
-          'taxonomy' => Portfolios::TAXONOMY_ID,
-          'field' => 'name',
-          'terms' => $name,
-        ],
+  private static function set_return_type($options) {
+    $return_types = ['id', 'name', 'slug', 'object'];
+    $return_type = $options['return_type'];
+
+    if (!in_array($return_type, $return_types)) {
+      $return_type = 'object';
+    }
+
+    return $return_type;
+  }
+
+  private static function filter_query_arg() {
+    return $_REQUEST[self::QUERY_ARG] ?? false;
+  }
+
+  private static function selected($filtered_slug, $portfolio_piece_slug) {
+    if ($filtered_slug === $portfolio_piece_slug) {
+      $markup = 'selected="selected"';
+    }
+
+    return $markup ?? '';
+  }
+
+  private static function in_media_library() {
+    return (get_current_screen()->base === 'upload' ? true : false);
+  }
+
+  public function __construct() {
+    add_action('plugins_loaded', [$this, 'create_options_page']);
+    add_action('init', [$this, 'create_post_type'], 0);
+    add_action('init', [$this, 'create_taxonomy'], 0);
+    add_action('init', [$this, 'create_bulk_action'], 0);
+    add_action('init', [$this, 'create_terms'], 10);
+    add_action('restrict_manage_posts', [$this, 'create_filters']);
+    add_action('acf/save_post', [$this, 'set_fields_on_save'], 20);
+    add_action('wp_trash_post', [$this, 'destroy_terms']);
+
+    add_filter('parse_query', [$this, 'filter_query']);
+  }
+
+  public function create_post_type() {
+    new PortfolioPostType();
+  }
+
+  public function create_taxonomy() {
+    new RelatedPortfolioTaxonomy();
+  }
+
+  public function create_bulk_action() {
+    new BulkAction();
+  }
+
+  public function create_options_page() {
+    $page_title = PortfolioPostType::PLURAL_NAME . ' Page';
+    $menu_title = PortfolioPostType::PLURAL_NAME . ' Page';
+    $parent_slug = 'edit.php?post_type=' . PortfolioPostType::ID;
+
+    if (function_exists('acf_add_options_sub_page')) {
+      acf_add_options_sub_page([
+        'page_title' => $page_title,
+        'menu_title' => $menu_title,
+        'parent_slug' => $parent_slug,
+      ]);
+    }
+  }
+
+  public function create_terms() {
+    foreach (self::all() as $portfolio_piece) {
+      $this->create_related_portfolio_term($portfolio_piece);
+    }
+  }
+
+  public function create_filters($post_type) {
+    if (!self::in_media_library()) {
+      return;
+    }
+
+    $filtered_slug = self::filter_query_arg() ?? '';
+
+    $portfolio_pieces = Portfolio::all();
+    sort($portfolio_pieces);
+
+    $options = [];
+
+    array_map(function ($piece) use (&$options, $filtered_slug) {
+      $selected = self::selected($filtered_slug, $piece->slug());
+      $slug = $piece->slug();
+      $name = $piece->name();
+
+      $options[] = "<option value=\"$slug\" $selected>$name</option>";
+    }, $portfolio_pieces);
+
+    $markup = '<select name=' . self::QUERY_ARG . '>';
+    $markup .= '<option value="0">All portfolio pieces</option>';
+    $markup .= implode($options);
+    $markup .= '</select>';
+    $markup .= '&nbsp;';
+
+    echo $markup;
+  }
+
+  public function filter_query($query) {
+    if (!(is_admin() && $query->is_main_query())) {
+      return $query;
+    }
+
+    if (!self::in_media_library()) {
+      return $query;
+    }
+
+    if (!self::filter_query_arg()) {
+      return $query;
+    }
+
+    if (self::filter_query_arg() === '0') {
+      return $query;
+    }
+
+    $query->query_vars['tax_query'] = [
+      [
+        'taxonomy' => Portfolio::TAXONOMY_ID,
+        'field' => 'slug',
+        'terms' => self::filter_query_arg(),
       ],
+    ];
+
+    return $query;
+  }
+
+  public function set_fields_on_save($post_id) {
+    if (!$this->will_set_on_save($post_id)) {
+      return;
+    }
+
+    $piece = new PortfolioPiece($post_id);
+
+    $this->set_post_data($piece);
+    $this->set_post_thumbnail($piece);
+    $this->create_related_portfolio_piece_term($piece);
+  }
+
+  public function destroy_terms($post_id) {
+    if (!$this->will_set_on_save($post_id)) {
+      return;
+    }
+
+    $piece = new PortfolioPiece($post_id);
+
+    $this->delete_related_portfolio_piece_term($piece);
+  }
+
+  private function will_set_on_save($id) {
+    return (get_post_type($id) == PortfolioPostType::ID ? true : false);
+  }
+
+  private function set_post_data($portfolio_piece) {
+    wp_update_post([
+      'ID'         => $portfolio_piece->id(),
+      'post_name'  => sanitize_title($portfolio_piece->name()),
+      'post_title' => $portfolio_piece->name(),
     ]);
-
-    return $query->posts ?? [];
   }
 
-  public function __construct($portfolio_id = '') {
-    $this->id = $portfolio_id;
-    $this->set_name();
-    $this->set_banner();
-    $this->set_description();
-    $this->set_main_copy();
-    $this->set_card_image();
-    $this->set_main_image();
-    $this->set_quote();
-    $this->set_list();
-    $this->set_cta();
+  private function set_post_thumbnail($portfolio_piece) {
+    set_post_thumbnail($portfolio_piece->id(), $portfolio_piece->card_image());
   }
 
-  public function id() {
-    return $this->id;
+  private function create_related_portfolio_piece_term($portfolio_piece) {
+    if (get_post_status($portfolio_piece->id()) === 'publish') {
+      wp_insert_term($portfolio_piece->name(), self::TAXONOMY_ID);
+    }
   }
 
-  public function name() {
-    return $this->name;
-  }
+  private function delete_related_portfolio_piece_term($portfolio_piece) {
+    $term = get_term_by('name', $portfolio_piece->name(), self::TAXONOMY_ID);
 
-  public function slug() {
-    return get_post_field('post_name', $this->id);
-  }
-
-  public function link() {
-    return get_post_permalink($this->id);
-  }
-
-  public function term() {
-    return get_term_by('name', $this->name, Portfolios::TAXONOMY_ID);
-  }
-
-  public function description() {
-    return $this->description;
-  }
-
-  public function card_image($size = 'thumbnail') {
-    return wp_get_attachment_image_url($this->card_image, $size);
-  }
-
-  public function card_image_tag($size = 'thumbnail') {
-    return wp_get_attachment_image($this->card_image, $size);
-  }
-
-  public function banner($size = 'full') {
-    return wp_get_attachment_image_url($this->banner, $size);
-  }
-
-  public function main_copy() {
-    $copy = $this->main_copy;
-
-    $id = $copy['side_image'];
-    $img_tag = wp_get_attachment_image($id, 'large');
-
-    $copy['img_tag'] = $img_tag;
-
-    return $copy;
-  }
-
-  public function main_image($size = 'full') {
-    return wp_get_attachment_image_url($this->main_image, $size);
-  }
-
-  public function main_image_tag($size = 'full') {
-    return wp_get_attachment_image($this->main_image, $size);
-  }
-
-  public function quote() {
-    $quote = $this->quote;
-    $img_url = wp_get_attachment_image_url($quote['background_image'], 'large');
-
-    $quote['img_url'] = $img_url;
-
-    return $quote;
-  }
-
-  public function list() {
-    return $this->list;
-  }
-
-  public function cta($size = 'large') {
-    $cta = $this->cta;
-
-    $cta['image'] = wp_get_attachment_image_url($cta['image'], $size);
-
-    return $cta;
-  }
-
-  private function set_name() {
-    $default = 'Unnamed Portfolio';
-
-    $this->name = (get_field('portfolio_info', $this->id)['name'] ?: $default);
-  }
-
-  private function set_description() {
-    $this->description = get_field('portfolio_info', $this->id)['short_description'];
-  }
-
-  private function set_main_copy() {
-    $this->main_copy = get_field('portfolio_main_copy', $this->id);
-  }
-
-  private function set_card_image() {
-    $this->card_image = get_field('portfolio_images', $this->id)['card'];
-  }
-
-  private function set_banner() {
-    $this->banner = get_field('portfolio_images', $this->id)['banner'];
-  }
-
-  private function set_main_image() {
-    $this->main_image = get_field('portfolio_images', $this->id)['main'];
-  }
-
-  private function set_quote() {
-    $this->quote = get_field('portfolio_quote', $this->id);
-  }
-
-  private function set_list() {
-    $this->list = get_field('portfolio_list', $this->id);
-  }
-
-  private function set_cta() {
-    $cta_settings   = get_field('portfolio_cta', $this->id);
-    $overlay        = $cta_settings['overlay_color'];
-    $overlay_colors = [
-      'light' => '#F5F5F5',
-      'blue'  => '#293583'
-    ];
-
-    $cta_data = [
-      'show'           => $cta_settings['show'],
-      'heading'        => $cta_settings['heading'],
-      'overlay_color'  => $overlay,
-      'overlay_hex'    => $overlay_colors[$overlay],
-      'text'           => $cta_settings['text'],
-      'button_text'    => $cta_settings['button_text'],
-      'link'           => $cta_settings['link'],
-      'side_image_tag' => wp_get_attachment_image($cta_settings['image'], '1200x0'),
-      'bg_image_url'   => wp_get_attachment_image_url($cta_settings['bg_image'], 'fullwidth'),
-    ];
-
-    $this->cta = $cta_data;
+    wp_delete_term($term->term_id, self::TAXONOMY_ID);
   }
 }

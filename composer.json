@@ -1,9 +1,9 @@
 {
-  "name": "xzito/portfolios",
+  "name": "xzito/portfolio",
   "version": "1.0.0",
   "type": "wordpress-muplugin",
-  "description": "WordPress CPT for portfolios.",
-  "homepage": "https://github.com/xzito/portfolios",
+  "description": "WordPress CPT for portfolio.",
+  "homepage": "https://github.com/xzito/portfolio",
   "authors": [
     {
       "name": "James Boynton",
@@ -12,7 +12,7 @@
     }
   ],
   "support": {
-    "issues": "https://github.com/xzito/portfolios/issues"
+    "issues": "https://github.com/xzito/portfolio/issues"
   },
   "require": {
     "php": "^7.2.0",
@@ -21,7 +21,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Xzito\\Portfolios\\" : "src"
+      "Xzito\\Portfolio\\" : "src"
     }
   }
 }

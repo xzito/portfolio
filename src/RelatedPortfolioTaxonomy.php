@@ -1,13 +1,13 @@
 <?php
 
-namespace Xzito\Portfolios;
+namespace Xzito\Portfolio;
 
 use PostTypes\Taxonomy;
 
 class RelatedPortfolioTaxonomy {
   public const POST_TYPE = 'attachment';
-  public const PLURAL_NAME = 'Related Portfolios';
-  public const SINGULAR_NAME = 'Related Portfolio';
+  public const PLURAL_NAME = 'Related Portfolio Pieces';
+  public const SINGULAR_NAME = 'Related Portfolio Piece';
 
   private $taxonomy;
 
@@ -25,19 +25,19 @@ class RelatedPortfolioTaxonomy {
   }
 
   public function cast_taxonomy_terms() {
-    $terms = $_POST['tax_input'][Portfolios::TAXONOMY_ID] ?? '';
+    $terms = $_POST['tax_input'][Portfolio::TAXONOMY_ID] ?? '';
 
     if ($terms) {
-      $_POST['tax_input'][Portfolios::TAXONOMY_ID] = array_map('intval', $terms);
+      $_POST['tax_input'][Portfolio::TAXONOMY_ID] = array_map('intval', $terms);
     }
   }
 
   private function names() {
     return [
-      'name' => Portfolios::TAXONOMY_ID,
+      'name' => Portfolio::TAXONOMY_ID,
       'singular' => self::SINGULAR_NAME,
       'plural' => self::PLURAL_NAME,
-      'slug' => Portfolios::TAXONOMY_ID,
+      'slug' => Portfolio::TAXONOMY_ID,
     ];
   }
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace Xzito\Portfolios;
+namespace Xzito\Portfolio;
 
-class PortfoliosPage {
+class PortfolioPage {
   private $name;
   private $banner;
   private $about;
@@ -40,35 +40,38 @@ class PortfoliosPage {
   }
 
   private function set_name() {
-    $this->name = get_field('portfolios_page', 'options')['page_title'];
+    $this->name = get_field('portfolio_page', 'options')['page_title'];
   }
 
   private function set_banner() {
-    $this->banner = get_field('portfolios_page', 'options')['banner'];
+    $this->banner = get_field('portfolio_page', 'options')['banner'];
   }
 
   private function set_about() {
-    $this->about = get_field('portfolios_page', 'options')['about'];
+    $this->about = get_field('portfolio_page', 'options')['about'];
   }
 
   private function set_cta() {
-    $cta_settings   = get_field('portfolios_page', 'options')['cta'];
+    $cta_settings   = get_field('portfolio_page', 'options')['cta'];
     $overlay        = $cta_settings['overlay_color'];
     $overlay_colors = [
       'light' => '#F5F5F5',
       'blue'  => '#293583'
     ];
+    $side_image_tag = wp_get_attachment_image($cta_settings['image'], '1200x0');
+    $bg_image =
+      wp_get_attachment_image_url($cta_settings['bg_image'], 'fullwidth');
 
     $cta_data = [
-      'show'           => $cta_settings['show'],
-      'heading'        => $cta_settings['heading'],
-      'overlay_color'  => $overlay,
-      'overlay_hex'    => $overlay_colors[$overlay],
-      'text'           => $cta_settings['text'],
-      'button_text'    => $cta_settings['button_text'],
-      'link'           => $cta_settings['link'],
-      'side_image_tag' => wp_get_attachment_image($cta_settings['image'], '1200x0'),
-      'bg_image_url'   => wp_get_attachment_image_url($cta_settings['bg_image'], 'fullwidth'),
+      'show' => $cta_settings['show'],
+      'heading' => $cta_settings['heading'],
+      'overlay_color' => $overlay,
+      'overlay_hex' => $overlay_colors[$overlay],
+      'text' => $cta_settings['text'],
+      'button_text' => $cta_settings['button_text'],
+      'link' => $cta_settings['link'],
+      'side_image_tag' => $side_image_tag,
+      'bg_image_url' => $bg_image,
     ];
 
     $this->cta = $cta_data;

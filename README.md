@@ -1,6 +1,6 @@
-# Portfolios
+# Portfolio
 
-A WordPress CPT for portfolios.
+A WordPress CPT for a portfolio.
 
 ## Environment Setup
 
@@ -24,7 +24,7 @@ that copies the plugin code to where ever it would normally be installed with
 
 | Variable                      | Description                                |
 |:------------------------------|:-------------------------------------------|
-| `XZ_SHOWROOMS_TRACKED_DIR`    | Your local copy of the project repository. |
-| `XZ_SHOWROOMS_TEST_DIR`       | Copy destination - probably inside `mu-plugins`. |
-| `XZ_SHOWROOMS_MU_PLUGIN_DIR`  | The `mu-plugins` directory.                |
-| `XZ_SHOWROOMS_JSON_DIR`       | The `acf-json` directory.                  |
+| `XZ_PORTFOLIO_TRACKED_DIR`    | Your local copy of the project repository. |
+| `XZ_PORTFOLIO_TEST_DIR`       | Copy destination - probably inside `mu-plugins`. |
+| `XZ_PORTFOLIO_MU_PLUGIN_DIR`  | The `mu-plugins` directory.                |
+| `XZ_PORTFOLIO_JSON_DIR`       | The `acf-json` directory.                  |
