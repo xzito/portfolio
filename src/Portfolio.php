@@ -83,8 +83,8 @@ class Portfolio {
   }
 
   public function create_options_page() {
-    $page_title = PortfolioPostType::PLURAL_NAME . ' Page';
-    $menu_title = PortfolioPostType::PLURAL_NAME . ' Page';
+    $page_title = PortfolioPostType::COLLECTIVE_NOUN . ' Page';
+    $menu_title = PortfolioPostType::COLLECTIVE_NOUN . ' Page';
     $parent_slug = 'edit.php?post_type=' . PortfolioPostType::ID;
 
     if (function_exists('acf_add_options_sub_page')) {

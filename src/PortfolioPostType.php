@@ -6,12 +6,13 @@ use PostTypes\PostType;
 
 class PortfolioPostType {
   public const ID = 'portfolio_piece';
-  public const PLURAL_NAME = 'Portfolio';
+  public const PLURAL_NAME = 'Portfolio Pieces';
   public const SINGULAR_NAME = 'Portfolio Piece';
+  public const COLLECTIVE_NOUN = 'Portfolio';
   public const SLUG = 'portfolio';
 
   private $cpt;
-  private $icon = 'dashicons-store';
+  private $icon = 'dashicons-portfolio';
 
   public function __construct() {
     $this->create_post_type();
@@ -50,9 +51,9 @@ class PortfolioPostType {
 
   private function set_labels() {
     $this->cpt->labels([
-      'search_items' => self::PLURAL_NAME,
-      'archives' => self::PLURAL_NAME,
-      'menu_name' => self::PLURAL_NAME,
+      'search_items' => self::COLLECTIVE_NOUN,
+      'archives' => self::COLLECTIVE_NOUN,
+      'menu_name' => self::COLLECTIVE_NOUN,
     ]);
   }
 }
