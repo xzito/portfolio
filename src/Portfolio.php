@@ -98,7 +98,7 @@ class Portfolio {
 
   public function create_terms() {
     foreach (self::all() as $portfolio_piece) {
-      $this->create_related_portfolio_term($portfolio_piece);
+      $this->create_related_portfolio_piece_term($portfolio_piece);
     }
   }
 
