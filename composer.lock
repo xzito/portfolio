@@ -4,32 +4,35 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5c41f999bcded8f5af72b5f88e4ccb5a",
+    "content-hash": "e88a9eb6b87e9a9db69b7fe742f926bb",
     "packages": [
         {
             "name": "composer/installers",
-            "version": "v1.7.0",
+            "version": "v1.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/installers.git",
-                "reference": "141b272484481432cda342727a427dc1e206bfa0"
+                "reference": "b93bcf0fa1fccb0b7d176b0967d969691cd74cca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/installers/zipball/141b272484481432cda342727a427dc1e206bfa0",
-                "reference": "141b272484481432cda342727a427dc1e206bfa0",
+                "url": "https://api.github.com/repos/composer/installers/zipball/b93bcf0fa1fccb0b7d176b0967d969691cd74cca",
+                "reference": "b93bcf0fa1fccb0b7d176b0967d969691cd74cca",
                 "shasum": ""
             },
             "require": {
-                "composer-plugin-api": "^1.0"
+                "composer-plugin-api": "^1.0 || ^2.0"
             },
             "replace": {
                 "roundcube/plugin-installer": "*",
                 "shama/baton": "*"
             },
             "require-dev": {
-                "composer/composer": "1.0.*@dev",
-                "phpunit/phpunit": "^4.8.36"
+                "composer/composer": "1.6.* || 2.0.*@dev",
+                "composer/semver": "1.0.* || 2.0.*@dev",
+                "phpunit/phpunit": "^4.8.36",
+                "sebastian/comparator": "^1.2.4",
+                "symfony/process": "^2.3"
             },
             "type": "composer-plugin",
             "extra": {
@@ -65,6 +68,7 @@
                 "Kanboard",
                 "Lan Management System",
                 "MODX Evo",
+                "MantisBT",
                 "Mautic",
                 "Maya",
                 "OXID",
@@ -119,6 +123,7 @@
                 "shopware",
                 "silverstripe",
                 "sydes",
+                "sylius",
                 "symfony",
                 "typo3",
                 "wordpress",
@@ -126,28 +131,38 @@
                 "zend",
                 "zikula"
             ],
-            "time": "2019-08-12T15:00:31+00:00"
+            "funding": [
+                {
+                    "url": "https://packagist.com",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/composer/composer",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-04-07T06:57:05+00:00"
         },
         {
             "name": "jjgrainger/posttypes",
-            "version": "2.0.1",
+            "version": "2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jjgrainger/PostTypes.git",
-                "reference": "04525d30d30ec19fef3478676b4f27aa405ac3a6"
+                "reference": "a87584606e9ef726f7621c1d71a184fdf7282172"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jjgrainger/PostTypes/zipball/04525d30d30ec19fef3478676b4f27aa405ac3a6",
-                "reference": "04525d30d30ec19fef3478676b4f27aa405ac3a6",
+                "url": "https://api.github.com/repos/jjgrainger/PostTypes/zipball/a87584606e9ef726f7621c1d71a184fdf7282172",
+                "reference": "a87584606e9ef726f7621c1d71a184fdf7282172",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.6"
+                "php": ">=7.2"
             },
             "require-dev": {
-                "phpunit/phpunit": "5.7",
-                "squizlabs/php_codesniffer": "^2.8"
+                "phpunit/phpunit": "8.*",
+                "squizlabs/php_codesniffer": "3.*"
             },
             "type": "library",
             "autoload": {
@@ -163,12 +178,12 @@
                 {
                     "name": "Joe Grainger",
                     "email": "hello@jjgrainger.co.uk",
-                    "homepage": "http://jjgrainger.co.uk"
+                    "homepage": "https://jjgrainger.co.uk"
                 }
             ],
             "description": "Simple WordPress custom post types.",
             "homepage": "https://github.com/jjgrainger/posttype",
-            "time": "2018-03-27T18:30:06+00:00"
+            "time": "2020-04-12T13:01:12+00:00"
         }
     ],
     "packages-dev": [],
@@ -180,5 +195,6 @@
     "platform": {
         "php": "^7.2.0"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
 }

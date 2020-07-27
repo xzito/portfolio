@@ -1,6 +1,6 @@
 {
   "name": "xzito/portfolio",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "wordpress-muplugin",
   "description": "WordPress CPT for portfolio.",
   "homepage": "https://github.com/xzito/portfolio",
