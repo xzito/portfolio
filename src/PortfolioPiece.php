@@ -9,7 +9,6 @@ class PortfolioPiece {
   private $banner;
   private $description;
   private $main_copy;
-  private $main_image;
   private $quote;
   private $list;
   private $cta;
@@ -52,7 +51,6 @@ class PortfolioPiece {
     $this->set_description();
     $this->set_main_copy();
     $this->set_card_image();
-    $this->set_main_image();
     $this->set_quote();
     $this->set_list();
     $this->set_cta();
@@ -155,10 +153,6 @@ class PortfolioPiece {
 
   private function set_banner() {
     $this->banner = get_field('portfolio_images', $this->id)['banner'];
-  }
-
-  private function set_main_image() {
-    $this->main_image = get_field('portfolio_images', $this->id)['main'];
   }
 
   private function set_quote() {

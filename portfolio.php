@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Portfolio
  * Description: A WordPress CPT for a portfolio.
- * Version: 1.0.1
+ * Version: 2.0.0
  * Author: James Boynton
  */
 
