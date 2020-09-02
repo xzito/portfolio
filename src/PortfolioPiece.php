@@ -108,7 +108,7 @@ class PortfolioPiece {
   }
 
   public function main_image_tag($size = 'full') {
-    return wp_get_attachment_image($this->main_image, $size);
+    return wp_get_attachment_image($this->card_image, $size);
   }
 
   public function quote() {

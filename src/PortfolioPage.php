@@ -40,19 +40,19 @@ class PortfolioPage {
   }
 
   private function set_name() {
-    $this->name = get_field('portfolio_page', 'options')['page_title'];
+    $this->name = get_field('portfolios_page', 'options')['page_title'];
   }
 
   private function set_banner() {
-    $this->banner = get_field('portfolio_page', 'options')['banner'];
+    $this->banner = get_field('portfolios_page', 'options')['banner'];
   }
 
   private function set_about() {
-    $this->about = get_field('portfolio_page', 'options')['about'];
+    $this->about = get_field('portfolios_page', 'options')['about'];
   }
 
   private function set_cta() {
-    $cta_settings   = get_field('portfolio_page', 'options')['cta'];
+    $cta_settings   = get_field('portfolios_page', 'options')['cta'];
     $overlay        = $cta_settings['overlay_color'];
     $overlay_colors = [
       'light' => '#F5F5F5',
